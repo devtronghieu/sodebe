@@ -1,8 +1,7 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { CountersService } from './counters.service';
 import { Counter } from './entities/counter.entity';
 import { CreateCounterInput } from './dto/create-counter.input';
-import { UpdateCounterInput } from './dto/update-counter.input';
 
 @Resolver(() => Counter)
 export class CountersResolver {
@@ -20,23 +19,18 @@ export class CountersResolver {
     return this.countersService.findAll();
   }
 
-  @Query(() => Counter, { name: 'counter' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.countersService.findOne(id);
+  @Query(() => Counter, { name: 'counter', nullable: true })
+  findOneByname(@Args('name') name: string) {
+    return this.countersService.findOneByName(name);
   }
 
-  @Mutation(() => Counter)
-  updateCounter(
-    @Args('updateCounterInput') updateCounterInput: UpdateCounterInput,
-  ) {
-    return this.countersService.update(
-      updateCounterInput.id,
-      updateCounterInput,
-    );
+  @Mutation(() => Counter, { nullable: true })
+  increaseCounterByName(@Args('name') name: string) {
+    return this.countersService.increaseByName(name);
   }
 
-  @Mutation(() => Counter)
-  removeCounter(@Args('id', { type: () => Int }) id: number) {
-    return this.countersService.remove(id);
+  @Mutation(() => Counter, { nullable: true })
+  removeCounterByName(@Args('name') name: string) {
+    return this.countersService.removeByName(name);
   }
 }

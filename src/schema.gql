@@ -3,29 +3,23 @@
 # ------------------------------------------------------
 
 type Counter {
-  """Count field (start from 0)"""
+  name: String!
+
+  """Count (start from 0)"""
   count: Int!
-  name: String
 }
 
 type Query {
   counters: [Counter!]!
-  counter(id: Int!): Counter!
+  counter(name: String!): Counter
 }
 
 type Mutation {
   createCounter(createCounterInput: CreateCounterInput!): Counter!
-  updateCounter(updateCounterInput: UpdateCounterInput!): Counter!
-  removeCounter(id: Int!): Counter!
+  increaseCounterByName(name: String!): Counter
+  removeCounterByName(name: String!): Counter
 }
 
 input CreateCounterInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateCounterInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  name: String!
 }

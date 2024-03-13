@@ -1,28 +1,58 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { CreateCounterInput } from './dto/create-counter.input';
-import { UpdateCounterInput } from './dto/update-counter.input';
 import { Counter } from './entities/counter.entity';
 
 @Injectable()
 export class CountersService {
+  counters: Map<string, Counter> = new Map();
+
   create(createCounterInput: CreateCounterInput) {
-    return 'This action adds a new counter';
+    if (this.counters.has(createCounterInput.name)) {
+      throw new ConflictException();
+    }
+
+    const counter: Counter = {
+      count: 0,
+      name: createCounterInput.name,
+    };
+    this.counters.set(createCounterInput.name, counter);
+
+    return counter;
   }
 
   findAll() {
-    const counters: Counter[] = [];
-    return counters;
+    return Array.from(this.counters.values());
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} counter`;
+  findOneByName(name: string) {
+    if (this.counters.has(name)) {
+      return this.counters.get(name);
+    } else {
+      throw new NotFoundException();
+    }
   }
 
-  update(id: number, updateCounterInput: UpdateCounterInput) {
-    return `This action updates a #${id} counter`;
+  increaseByName(name: string) {
+    if (this.counters.has(name)) {
+      const counter = this.counters.get(name);
+      counter.count++;
+      return counter;
+    } else {
+      throw new NotFoundException();
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} counter`;
+  removeByName(name: string) {
+    if (this.counters.has(name)) {
+      const counter = this.counters.get(name);
+      this.counters.delete(name);
+      return counter;
+    } else {
+      throw new NotFoundException();
+    }
   }
 }

@@ -2,9 +2,9 @@ import { ObjectType, Field, Int } from '@nestjs/graphql';
 
 @ObjectType()
 export class Counter {
-  @Field(() => Int, { description: 'Count field (start from 0)' })
-  count: number;
+  @Field()
+  name: string;
 
-  @Field({ nullable: true })
-  name?: string;
+  @Field(() => Int, { description: 'Count (start from 0)' })
+  count: number;
 }
