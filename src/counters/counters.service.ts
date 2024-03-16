@@ -5,54 +5,65 @@ import {
 } from '@nestjs/common';
 import { CreateCounterInput } from './dto/create-counter.input';
 import { Counter } from './entities/counter.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class CountersService {
-  counters: Map<string, Counter> = new Map();
+  constructor(
+    @InjectModel(Counter.name) private counterModel: Model<Counter>,
+  ) {}
 
-  create(createCounterInput: CreateCounterInput) {
-    if (this.counters.has(createCounterInput.name)) {
+  async create(createCounterInput: CreateCounterInput): Promise<Counter> {
+    const { name } = createCounterInput;
+
+    const counter = await this.counterModel.findOne({ name });
+
+    if (counter) {
       throw new ConflictException();
     }
 
-    const counter: Counter = {
+    return this.counterModel.create({
+      name,
       count: 0,
-      name: createCounterInput.name,
-    };
-    this.counters.set(createCounterInput.name, counter);
+    });
+  }
+
+  async findAll(): Promise<Counter[]> {
+    return this.counterModel.find().exec();
+  }
+
+  async findOneByName(name: string): Promise<Counter> {
+    const counter = await this.counterModel.findOne({ name });
+
+    if (!counter) {
+      throw new NotFoundException();
+    }
 
     return counter;
   }
 
-  findAll() {
-    return Array.from(this.counters.values());
-  }
+  async increaseByName(name: string): Promise<Counter> {
+    const counter = await this.counterModel.findOneAndUpdate(
+      { name },
+      { $inc: { count: 1 } },
+      { new: true },
+    );
 
-  findOneByName(name: string) {
-    if (this.counters.has(name)) {
-      return this.counters.get(name);
-    } else {
+    if (!counter) {
       throw new NotFoundException();
     }
+
+    return counter;
   }
 
-  increaseByName(name: string) {
-    if (this.counters.has(name)) {
-      const counter = this.counters.get(name);
-      counter.count++;
-      return counter;
-    } else {
-      throw new NotFoundException();
-    }
-  }
+  async removeByName(name: string) {
+    const counter = await this.counterModel.findOneAndDelete({ name });
 
-  removeByName(name: string) {
-    if (this.counters.has(name)) {
-      const counter = this.counters.get(name);
-      this.counters.delete(name);
-      return counter;
-    } else {
+    if (!counter) {
       throw new NotFoundException();
     }
+
+    return counter;
   }
 }
