@@ -11,7 +11,7 @@ import { CountersModule } from './counters/counters.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    // MongooseModule.forRoot(process.env.DATABASE_URL),
+    MongooseModule.forRoot(process.env.DATABASE_URL),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
