@@ -47,3 +47,6 @@ $ pnpm run test:cov
 - GraphQL in 100s: https://www.youtube.com/watch?v=eIQh02xuVw4&pp=ygUPZ3JhcGhxbCBpbiAxMDBz
 - GraphQL Docs: https://graphql.org/learn/
 - GraphQL on NestJS: https://docs.nestjs.com/graphql/quick-start
+
+- Passport Auth: https://docs.nestjs.com/recipes/passport#graphql
+- Passport JWT + GraphQL guide: https://medium.com/@gabrielkochfodi/jwt-passport-authentication-with-nest-js-graphql-and-bcryptjs-1a9cf8c7ff8a
