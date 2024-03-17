@@ -1,14 +1,10 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { UserRole } from './role.entity';
 
 @Schema()
 @ObjectType()
 export class User {
-  @Prop({ required: true, unique: true })
-  @Field(() => ID)
-  id: string;
-
   @Prop({ required: true, unique: true })
   @Field()
   username: string;
@@ -24,10 +20,6 @@ export class User {
   })
   @Field(() => [UserRole])
   roles: UserRole[];
-
-  @Prop()
-  @Field()
-  email: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -3,7 +3,7 @@ import { UserRole } from 'src/users/entities/role.entity';
 export const saltRounds = 12;
 
 export const jwtConstants = {
-  secret: process.env.JWT_SECRET,
+  secret: 'sodebe',
   expiresIn: 60 * 60, // 1 hour
 };
 

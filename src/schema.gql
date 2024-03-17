@@ -9,6 +9,21 @@ type Counter {
   count: Int!
 }
 
+type User {
+  username: String!
+  passwordHash: String!
+  roles: [UserRole!]!
+}
+
+enum UserRole {
+  User
+  Admin
+}
+
+type LoginResponse {
+  accessToken: String!
+}
+
 type Query {
   counters: [Counter!]!
   counter(name: String!): Counter
@@ -18,8 +33,20 @@ type Mutation {
   createCounter(createCounterInput: CreateCounterInput!): Counter!
   increaseCounterByName(name: String!): Counter
   removeCounterByName(name: String!): Counter
+  login(loginUserInput: LoginUserInput!): LoginResponse!
+  register(registerUserInput: RegisterUserInput!): User!
 }
 
 input CreateCounterInput {
   name: String!
+}
+
+input LoginUserInput {
+  username: String!
+  password: String!
+}
+
+input RegisterUserInput {
+  username: String!
+  password: String!
 }

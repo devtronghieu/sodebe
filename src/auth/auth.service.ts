@@ -4,6 +4,9 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
 import { JwtPayload, jwtConstants, saltRounds } from './constants';
+import { RegisterUserInput } from './dto/register-user.input';
+import { UserRole } from 'src/users/entities/role.entity';
+import { LoginResponse } from './entities/login-response.entity';
 
 @Injectable()
 export class AuthService {
@@ -12,20 +15,19 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateLocal(username: string, password: string): Promise<User> {
+  async validateLocal(username: string, password: string) {
     const user = await this.usersService.findOne(username);
 
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
 
-    const passwordHash = await hash(password, saltRounds);
-    const passwordHasMatch = await compare(passwordHash, user.passwordHash);
+    const passwordHasMatch = await compare(password, user.passwordHash);
 
     if (passwordHasMatch) {
       return user;
     } else {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Wrong password');
     }
   }
 
@@ -37,9 +39,9 @@ export class AuthService {
     return user;
   }
 
-  async login(user: User): Promise<{ accessToken: string }> {
+  async login(userId: string, user: User): Promise<LoginResponse> {
     const payload: JwtPayload = {
-      userId: user.id,
+      userId: userId,
       username: user.username,
       roles: user.roles,
       iat: Math.floor(Date.now() / 1000),
@@ -49,5 +51,17 @@ export class AuthService {
     return {
       accessToken: this.jwtService.sign(payload),
     };
+  }
+
+  async register(userInput: RegisterUserInput): Promise<User> {
+    const passwordHash = await hash(userInput.password, saltRounds);
+
+    const newUser = await this.usersService.create({
+      username: userInput.username,
+      passwordHash,
+      roles: [UserRole.User],
+    });
+
+    return newUser;
   }
 }
