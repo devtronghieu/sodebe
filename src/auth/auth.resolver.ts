@@ -10,12 +10,23 @@ export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Mutation(() => LoginResponse)
-  async login(@Args('loginUserInput') loginUserInput: LoginUserInput) {
+  async login(
+    @Args('loginUserInput') loginUserInput: LoginUserInput,
+  ): Promise<LoginResponse> {
     const user = await this.authService.validateLocal(
       loginUserInput.username,
       loginUserInput.password,
     );
-    return this.authService.login(user._id.toString(), user);
+
+    const accessToken = await this.authService.generateAccessToken(
+      user._id.toString(),
+      user,
+    );
+
+    return {
+      accessToken,
+      profile: user,
+    };
   }
 
   @Mutation(() => User)

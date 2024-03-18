@@ -3,10 +3,9 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
-import { JwtPayload, jwtConstants, saltRounds } from './constants';
+import { JwtPayload, saltRounds } from './constants';
 import { RegisterUserInput } from './dto/register-user.input';
 import { UserRole } from 'src/users/entities/role.entity';
-import { LoginResponse } from './entities/login-response.entity';
 
 @Injectable()
 export class AuthService {
@@ -39,18 +38,29 @@ export class AuthService {
     return user;
   }
 
-  async login(userId: string, user: User): Promise<LoginResponse> {
+  async generateAccessToken(userId: string, user: User) {
     const payload: JwtPayload = {
       userId: userId,
       username: user.username,
       roles: user.roles,
       iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + jwtConstants.expiresIn,
+      exp: Math.floor(Date.now() / 1000) + parseInt(process.env.JWT_ACCESS_EXP),
     };
 
-    return {
-      accessToken: this.jwtService.sign(payload),
+    return this.jwtService.sign(payload);
+  }
+
+  async generateRefreshToken(userId: string, user: User) {
+    const payload: JwtPayload = {
+      userId: userId,
+      username: user.username,
+      roles: user.roles,
+      iat: Math.floor(Date.now() / 1000),
+      exp:
+        Math.floor(Date.now() / 1000) + parseInt(process.env.JWT_REFRESH_EXP),
     };
+
+    return this.jwtService.sign(payload);
   }
 
   async register(userInput: RegisterUserInput): Promise<User> {
