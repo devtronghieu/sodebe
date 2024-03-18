@@ -27,6 +27,7 @@ type LoginResponse {
 type Query {
   counters: [Counter!]!
   counter(name: String!): Counter
+  user: User
 }
 
 type Mutation {

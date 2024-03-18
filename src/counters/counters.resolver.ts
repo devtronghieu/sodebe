@@ -3,7 +3,7 @@ import { CountersService } from './counters.service';
 import { Counter } from './entities/counter.entity';
 import { CreateCounterInput } from './dto/create-counter.input';
 
-@Resolver(() => Counter)
+@Resolver()
 export class CountersResolver {
   constructor(private readonly countersService: CountersService) {}
 
