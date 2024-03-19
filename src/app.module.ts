@@ -8,6 +8,7 @@ import { CountersModule } from './counters/counters.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { UserRole } from './users/entities/role.entity';
+import { HttpContext } from './types';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UserRole } from './users/entities/role.entity';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      context: ({ req, res }): HttpContext => ({ req, res }),
     }),
     CountersModule,
     UsersModule,

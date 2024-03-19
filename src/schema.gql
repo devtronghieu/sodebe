@@ -36,6 +36,7 @@ type Mutation {
   increaseCounterByName(name: String!): Counter
   removeCounterByName(name: String!): Counter
   login(loginUserInput: LoginUserInput!): LoginResponse!
+  refresh: LoginResponse!
   register(registerUserInput: RegisterUserInput!): User!
 }
 

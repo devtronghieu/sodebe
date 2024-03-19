@@ -1,5 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 import { UserRole } from './role.entity';
 
 @Schema()
@@ -21,6 +22,8 @@ export class User {
   @Field(() => [UserRole])
   roles: UserRole[];
 }
+
+export type UserDocument = User & Document;
 
 export const UserSchema = SchemaFactory.createForClass(User);
 UserSchema.index({ username: 1 }, { unique: true });
